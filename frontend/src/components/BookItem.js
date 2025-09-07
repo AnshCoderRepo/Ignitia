@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { borrowBook, returnBook } from '../services/api';
+import { borrowBook } from '../services/api';
 
 const BookItem = ({ book, onAction }) => {
     const { isAuthenticated, user } = useAuth();
@@ -25,33 +25,17 @@ const BookItem = ({ book, onAction }) => {
         }
     };
 
-    const handleReturn = async () => {
-        try {
-            setLoading(true);
-            setError('');
-            await returnBook(book._id);
-            onAction();
-        } catch (error) {
-            setError(error.response?.data?.message || 'Failed to return book');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const canReturn = isAuthenticated &&
-        (user.role === 'admin' || book.borrowedBy === user._id);
-
     return (
         <div className="book-item">
             <h3>{book.title}</h3>
             <p>Author: {book.author}</p>
             <p>ISBN: {book.isbn}</p>
-            <p>Status: {book.available ? 'Available' : 'Borrowed'}</p>
+            <p>Available copies: {book.availableCopies} / {book.totalCopies}</p>
 
             {error && <p className="error">{error}</p>}
 
             <div className="book-actions">
-                {book.available ? (
+                {book.availableCopies > 0 ? (
                     <button
                         onClick={handleBorrow}
                         disabled={loading || !isAuthenticated}
@@ -59,14 +43,7 @@ const BookItem = ({ book, onAction }) => {
                         {loading ? 'Processing...' : 'Borrow'}
                     </button>
                 ) : (
-                    canReturn && (
-                        <button
-                            onClick={handleReturn}
-                            disabled={loading}
-                        >
-                            {loading ? 'Processing...' : 'Return'}
-                        </button>
-                    )
+                    <p className="out-of-stock">No copies available</p>
                 )}
             </div>
         </div>

@@ -20,6 +20,7 @@ const Navbar = () => {
                 {isAuthenticated ? (
                     <>
                         <span>Welcome, {user.name}</span>
+                        <Link to="/my-books">My Books</Link>
                         {user.role === 'admin' && (
                             <Link to="/admin">Admin Dashboard</Link>
                         )}

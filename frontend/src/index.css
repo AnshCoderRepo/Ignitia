@@ -258,3 +258,44 @@ body {
     flex-direction: column;
   }
 }
+/* My Books Styles */
+.my-books {
+  padding: 20px 0;
+}
+
+/* Admin Book Item Styles */
+.admin-book-item {
+  position: relative;
+}
+
+.edit-copies {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.edit-copies input {
+  padding: 5px;
+  width: 100px;
+}
+
+.borrowers-list {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+.borrower-item {
+  padding: 5px;
+  border-bottom: 1px solid #eee;
+}
+
+.borrower-item:last-child {
+  border-bottom: none;
+}
+
+.out-of-stock {
+  color: #e74c3c;
+  font-style: italic;
+}

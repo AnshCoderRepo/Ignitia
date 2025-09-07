@@ -29,7 +29,9 @@ export const login = (userData) => api.post('/auth/login', userData);
 export const getAvailableBooks = () => api.get('/books/available');
 export const searchBooks = (query) => api.get(`/books/search?query=${query}`);
 export const getAllBooks = () => api.get('/books/all');
+export const getMyBooks = () => api.get('/books/my-books');
 export const addBook = (bookData) => api.post('/books', bookData);
+export const updateBookCopies = (id, totalCopies) => api.put(`/books/${id}/copies`, { totalCopies });
 
 // Borrow API calls
 export const borrowBook = (id) => api.post(`/borrow/${id}`);

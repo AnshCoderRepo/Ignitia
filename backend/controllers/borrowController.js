@@ -9,15 +9,15 @@ const borrowBook = async (req, res) => {
             return res.status(404).json({ message: 'Book not found' });
         }
 
-        if (!book.available) {
-            return res.status(400).json({ message: 'Book is not available' });
+        if (!book.canBorrow(req.user._id)) {
+            return res.status(400).json({
+                message: book.availableCopies > 0
+                    ? 'You already have this book borrowed'
+                    : 'No copies available'
+            });
         }
 
-        book.available = false;
-        book.borrowedBy = req.user._id;
-        book.borrowDate = new Date();
-
-        await book.save();
+        await book.borrow(req.user._id);
 
         res.json({ message: 'Book borrowed successfully', book });
     } catch (error) {
@@ -34,20 +34,7 @@ const returnBook = async (req, res) => {
             return res.status(404).json({ message: 'Book not found' });
         }
 
-        if (book.available) {
-            return res.status(400).json({ message: 'Book is not borrowed' });
-        }
-
-        // Check if the user is the one who borrowed the book or an admin
-        if (book.borrowedBy.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
-            return res.status(403).json({ message: 'You can only return books you borrowed' });
-        }
-
-        book.available = true;
-        book.borrowedBy = null;
-        book.borrowDate = null;
-
-        await book.save();
+        await book.return(req.user._id);
 
         res.json({ message: 'Book returned successfully', book });
     } catch (error) {

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import BookList from './components/BookList';
+import MyBooks from './components/MyBooks';
 import Login from './components/Login';
 import Register from './components/Register';
 import AdminDashboard from './components/AdminDashboard';
@@ -18,6 +19,11 @@ function App() {
           <div className="container">
             <Routes>
               <Route path="/" element={<BookList />} />
+              <Route path="/my-books" element={
+                <PrivateRoute>
+                  <MyBooks />
+                </PrivateRoute>
+              } />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route
