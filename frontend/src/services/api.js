@@ -21,10 +21,12 @@ api.interceptors.request.use(
     }
 );
 
+export const getProfile = () => api.get('/auth/profile');
+
 // Auth API calls
 export const register = (userData) => api.post('/auth/register', userData);
 export const login = (userData) => api.post('/auth/login', userData);
-
+export const logout = () => api.post('/auth/logout');
 // Books API calls
 export const getAvailableBooks = () => api.get('/books/available');
 export const searchBooks = (query) => api.get(`/books/search?query=${query}`);

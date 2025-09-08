@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { login as loginApi, register as registerApi } from '../services/api';
+import { login as loginApi, register as registerApi, getProfile, logout as logoutApi } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -13,24 +13,37 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        const userData = localStorage.getItem('user');
 
-        if (token && userData) {
-            setUser(JSON.parse(userData));
+        if (token) {
+            fetchUserProfile();
+        } else {
+            setLoading(false);
         }
-        setLoading(false);
     }, []);
+
+    const fetchUserProfile = async () => {
+        try {
+            const response = await getProfile();
+            setUser(response.data);
+        } catch (error) {
+            // Token might be invalid, clear storage
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const login = async (email, password) => {
         try {
             const response = await loginApi({ email, password });
-            const { token, ...userData } = response.data;
+            const { token, redirectTo, ...userData } = response.data;
 
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(userData));
             setUser(userData);
 
-            return { success: true };
+            return { success: true, redirectTo };
         } catch (error) {
             return {
                 success: false,
@@ -57,10 +70,19 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const logout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        setUser(null);
+    const logout = async () => {
+        try {
+            // Call the logout API endpoint if available
+            await logoutApi();
+        } catch (error) {
+            console.error('Logout API call failed:', error);
+            // Continue with client-side logout even if API call fails
+        } finally {
+            // Always clear client-side storage
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setUser(null);
+        }
     };
 
     const value = {
@@ -70,6 +92,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         isAuthenticated: !!user,
         isAdmin: user?.role === 'admin',
+        refreshUser: fetchUserProfile,
     };
 
     return (

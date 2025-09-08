@@ -9,7 +9,7 @@ import Register from './components/Register';
 import AdminDashboard from './components/AdminDashboard';
 import PrivateRoute from './components/PrivateRoute';
 import './index.css';
-
+import UserProfile from './components/UserProfile';
 function App() {
   return (
     <AuthProvider>
@@ -31,6 +31,14 @@ function App() {
                 element={
                   <PrivateRoute adminOnly={true}>
                     <AdminDashboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <PrivateRoute>
+                    <UserProfile />
                   </PrivateRoute>
                 }
               />
